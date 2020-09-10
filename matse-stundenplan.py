@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import pytz
 import re
 import requests
 import uuid
