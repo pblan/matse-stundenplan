@@ -97,7 +97,7 @@ def build(id):
 
     # Output ICS File
     # with open('stundenplan_py_{}.ics'.format(id), 'w') as f:
-    with open("stundenplan_py_{}.ics".format(id), 'wb') as f:
+    with open(os.path.expanduser("~") + '/html/matse/{}/calendar.ics'.format(id), 'wb') as f:
         content = ''.join(str_list)
         content = re.sub(r"None", "", content)
         content = re.sub(r"<br />", r"\r\n \\n", content)
