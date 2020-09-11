@@ -15,10 +15,6 @@ def is_dst(dt=None, timezone=tz):
         dt = datetime.utcnow()
     timezone = pytz.timezone(timezone)
     timezone_aware_date = timezone.localize(dt, is_dst=None)
-
-    print(dt)
-    print(timezone_aware_date.tzinfo._dst.seconds != 0)
-
     return timezone_aware_date.tzinfo._dst.seconds != 0
 
 def adjust_json_date(date, offset = -1):
@@ -113,8 +109,8 @@ def build(id):
     str_list.append('END:VCALENDAR')
 
     # Output ICS File
-    #with open(os.path.expanduser("~") + '/html/matse/{}/calendar.ics'.format(id), 'wb') as f:
-    with open(os.path.expanduser("~") + '/html/dev/matse/{}/calendar.ics'.format(id), 'wb') as f:
+    with open(os.path.expanduser("~") + '/html/matse/{}/calendar.ics'.format(id), 'wb') as f:
+    #with open(os.path.expanduser("~") + '/html/dev/matse/{}/calendar.ics'.format(id), 'wb') as f:
         content = ''.join(str_list)
         content = re.sub(r"None", "", content)
         content = re.sub(r"<br />", r"\r\n \\n", content)
