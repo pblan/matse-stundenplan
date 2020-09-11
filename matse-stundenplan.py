@@ -3,11 +3,28 @@ import re
 import requests
 import uuid
 import os
+import pytz
+
+tz = 'Europe/Berlin'
 
 # Input: 2020-09-03T11:30:00
 # Output: 20200903093000Z
-def adjust_json_date(date, offset = -2):
+
+def is_dst(dt=None, timezone=tz):
+    if dt is None:
+        dt = datetime.utcnow()
+    timezone = pytz.timezone(timezone)
+    timezone_aware_date = timezone.localize(dt, is_dst=None)
+
+    print(dt)
+    print(timezone_aware_date.tzinfo._dst.seconds != 0)
+
+    return timezone_aware_date.tzinfo._dst.seconds != 0
+
+def adjust_json_date(date, offset = -1):
     year, month, day, hour, minute, sec = date[0:4], date[5:7], date[8:10], int(date[11:13]), date[14:16], date[17:19]
+    if (is_dst(datetime(year, month, day, hour, minute))):
+        hour -= 1
     hour += offset
     if (hour < 10):
         hour_str = "0{}".format(hour)
@@ -17,7 +34,7 @@ def adjust_json_date(date, offset = -2):
     return "{}{}{}T{}{}{}Z".format(year, month, day, hour_str, minute, sec)
 
 
-def adjust_datetime_date(date, offset = -2):
+def adjust_datetime_date(date, offset = -1):
     year, month, day, hour, minute, sec = date.year, date.month, date.day, date.hour, date.minute, date.second
     hour += offset
 
@@ -70,7 +87,7 @@ def build(id):
     str_list.append('METHOD:PUBLISH\r\n')
     str_list.append('PRODID:-//pblan/calendar/matse\r\n')
     str_list.append('CALSCALE:GREGORIAN\r\n')
-    str_list.append('X-WR-TIMEZONE:Europe/Vienna\r\n')
+    str_list.append('X-WR-TIMEZONE:{}\r\n'.format(tz))
 
     for x in dict:
         if (re.search("Feiertag", x['title']) != None):
@@ -96,8 +113,8 @@ def build(id):
     str_list.append('END:VCALENDAR')
 
     # Output ICS File
-    # with open('stundenplan_py_{}.ics'.format(id), 'w') as f:
-    with open(os.path.expanduser("~") + '/html/matse/{}/calendar.ics'.format(id), 'wb') as f:
+    #with open(os.path.expanduser("~") + '/html/matse/{}/calendar.ics'.format(id), 'wb') as f:
+    with open(os.path.expanduser("~") + '/html/dev/matse/{}/calendar.ics'.format(id), 'wb') as f:
         content = ''.join(str_list)
         content = re.sub(r"None", "", content)
         content = re.sub(r"<br />", r"\r\n \\n", content)
