@@ -23,7 +23,7 @@ def is_dst(dt=None, timezone=tz):
 
 def adjust_json_date(date, offset = -1):
     year, month, day, hour, minute, sec = date[0:4], date[5:7], date[8:10], int(date[11:13]), date[14:16], date[17:19]
-    if (is_dst(datetime(year, month, day, hour, minute))):
+    if (is_dst(datetime(int(year), int(month), int(day), hour, int(minute)))):
         hour -= 1
     hour += offset
     if (hour < 10):
