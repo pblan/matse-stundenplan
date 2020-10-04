@@ -5,6 +5,18 @@ import uuid
 import os
 import pytz
 
+courses_dict = {'Betriebswirtschaftslehre': 'bwl',
+                'C#': 'csharp',
+                'Technisches Englisch': 'technisches_englisch',
+                'Software Development in a Customer-Supplier Relation': 'sd_in_a_csr',
+                'Fortran': 'fortran',
+                'Einführung in die stochastischen Prozesse': 'einfuehrung_stoch_prozesse',
+                'Prozessorientiertes Qualitätsmanagement (TÜV)': 'tuev',
+                'C++': 'cpp',
+                'Machine Learning': 'machine_learning',
+                'Numerik 2': 'numerik_2',
+                'Einführung in die Parallelprogrammierung': 'einfuehrung_parallelprogrammierung'}
+
 tz = 'Europe/Berlin'
 
 # Input: 2020-09-03T11:30:00
@@ -62,8 +74,8 @@ def adjust_datetime_date(date, offset = -1):
     return "{}{}{}T{}{}{}Z".format(year, month_str, day_str, hour_str, minute_str, sec_str)
 
 
-def build(id):
-    print("Chosen calendar id: ", id)
+def build(id, name=None):
+    print("Chosen calendar: ", id, " ", name)
     print("Starting to build new .ics file...")
 
     now = datetime.now()
@@ -86,7 +98,9 @@ def build(id):
     str_list.append('X-WR-TIMEZONE:{}\r\n'.format(tz))
 
     for x in dict:
-        if (re.search("Feiertag", x['title']) != None):
+        if ("Feiertag" in x['title']):
+            continue
+        if (name != None and name not in x['title']):
             continue
 
         # Create ICS/iCalendar events
@@ -109,8 +123,12 @@ def build(id):
     str_list.append('END:VCALENDAR')
 
     # Output ICS File
-    with open(os.path.expanduser("~") + '/html/matse/{}/calendar.ics'.format(id), 'wb') as f:
-    #with open(os.path.expanduser("~") + '/html/dev/matse/{}/calendar.ics'.format(id), 'wb') as f:
+    if (name == None):
+        calendar_path = os.path.expanduser("~") + '/html/dev/matse/{}/calendar.ics'.format(id)
+    else:
+        calendar_path = os.path.expanduser("~") + '/html/dev/matse/{}/{}_calendar.ics'.format(id,courses_dict(name))
+    
+    with open(calendar_path, 'wb') as f:
         content = ''.join(str_list)
         content = re.sub(r"None", "", content)
         content = re.sub(r"<br />", r"\r\n \\n", content)
@@ -123,7 +141,28 @@ def build(id):
 
     print("Done writing data!")
 
+def fetch_courses():
+    now = datetime.now()
 
-build(1)
-build(2)
-build(3)
+    start = "{}-09-01".format(now.year)
+    end = "{}-08-30".format((now + timedelta(days=366)).year)
+
+    url = "https://www.matse.itc.rwth-aachen.de/stundenplan/web/eventFeed/4?start={}&end={}".format(
+        start, end)
+    r = requests.get(url)
+    dict = r.json()
+    print("Got data...")
+    
+    print("Fetching courses...")
+    s = set()
+    for x in dict:
+        if (re.search("Feiertag", x['title']) != None):
+            continue
+        s.add(x['title'])
+    return s
+
+#build(1)
+#build(2)
+#build(3)
+for course in fetch_courses():
+    build(4,course)
