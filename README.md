@@ -19,8 +19,4 @@ Tested with Python3.6 on CentOS Linux 7 (Core).
 ## Usage
 To access the calendar, simply copy the URL below and paste it into your Calendar Client (e.g. Google Calendar, Apple Calendar, Outlook).
 
-Note: If you use iOS, you can simply click the link and your device will handle everything!
-
-1. Lehrjahr: http://paddel.uber.space/matse/1/calendar.ics
-2. Lehrjahr: http://paddel.uber.space/matse/2/calendar.ics
-3. Lehrjahr: http://paddel.uber.space/matse/3/calendar.ics
+(Update: Go to https://paddel.xyz/matse/ for more information!)
