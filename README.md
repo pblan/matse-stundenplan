@@ -19,4 +19,4 @@ Tested with Python3.6 on CentOS Linux 7 (Core).
 ## Usage
 To access the calendar, simply copy the URL below and paste it into your Calendar Client (e.g. Google Calendar, Apple Calendar, Outlook).
 
-(Update: Go to https://paddel.xyz/matse/ for more information!)
+(Update: Go to https://matse.paddel.xyz/stundenplan for more information!)
